@@ -108,27 +108,32 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file):
 
 	subprocesses = []
 
-	# words per computing subprocess
-	wpt = nwords / nsubproc
-
 	# initialize the counter subprocess (only in verbose mode)
 	counter = Value('i', 0)
 	if verbose:
 		counter_sub = Process(target = show_progress, args = (counter, nwords))
 		counter_sub.start()
 
+	# computations per subprocess
+	comp_per_subproc = (nwords*(nwords+1)/2) / nsubproc
+
 	# configure the computing subprocesses
+	i_min = 0
+	i_max = 1
 	for n in range(nsubproc):
 
-		i_min = n*wpt
-		i_max = (n+1)*wpt
-
-		# the last subprocess gets all remaining words
 		if n == nsubproc-1:
 			i_max = nwords
+		else:
+			comp_subproc_n = nwords - i_min - 1
+			while comp_subproc_n < comp_per_subproc:
+				i_max += 1
+				comp_subproc_n += nwords - i_max
 
 		subprocesses.append( Process(target = compute_distances,
 			args = (distmap, words, i_min, i_max, max_dist, counter) ) )
+
+		i_min = i_max
 
 	# start all subprocesses
 	for n in range(nsubproc):
