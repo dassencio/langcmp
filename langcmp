@@ -71,6 +71,19 @@ def print_results(nwords, distmap, words, out_file):
 		for dist,word in cluster:
 			out_file.write(" %s" % word)
 		out_file.write("\n")
+
+
+##
+# @brief analyzes and prints basic statistics about the results obtained
+#
+def print_stats(nwords, max_dist, distmap, words):
+
+	avg_neighbors = float(len(distmap)) / float(len(words))
+
+	print "Number of words analyzed (more than %d characters): %d" % (max_dist, nwords)
+	print "Average number of words within distance %d from any word: %f" % (max_dist, avg_neighbors)
+
+
 ##
 # @brief prints an error message and exits with an error code (1)
 #
@@ -128,6 +141,8 @@ def main(nsubproc, min_wlen, max_dist, verbose, stats, in_file, out_file):
 		counter_sub.join()
 
 	print_results(nwords, distmap, words, out_file)
+
+	print_stats(nwords, max_dist, distmap, words)
 
 
 if __name__=="__main__":
