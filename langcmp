@@ -88,7 +88,7 @@ def print_stats(nwords, max_dist, distmap, words):
 
 	avg_neighbors = float(len(distmap)) / float(len(words))
 
-	print "Number of words analyzed (more than %d characters): %d" % (max_dist, nwords)
+	print "Number of words analyzed (length >= %d characters): %d" % (max_dist, nwords)
 	print "Average number of words within distance %d from any word: %f" % (max_dist, avg_neighbors)
 
 
