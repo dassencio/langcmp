@@ -54,6 +54,23 @@ def show_progress(counter, nwords):
 			if counter.value == nwords: break
 			time.sleep(1)
 
+
+##
+# @brief prints the computed results to an output file
+#
+def print_results(nwords, distmap, words, out_file):
+
+	for i in range(nwords):
+		cluster = []
+		for j in range(nwords):
+			if (i,j) in distmap:
+				cluster.append((distmap[i,j],words[j]))
+		# tuples are sorted lexicographically (distances first, words second)
+		cluster.sort()
+		out_file.write("%s:" % words[i])
+		for dist,word in cluster:
+			out_file.write(" %s" % word)
+		out_file.write("\n")
 ##
 # @brief prints an error message and exits with an error code (1)
 #
@@ -110,18 +127,7 @@ def main(nsubproc, min_wlen, max_dist, verbose, stats, in_file, out_file):
 	if verbose:
 		counter_sub.join()
 
-	# print the results to the output file
-	for i in range(nwords):
-		cluster = []
-		for j in range(nwords):
-			if (i,j) in distmap:
-				cluster.append((distmap[i,j],words[j]))
-		# tuples are sorted lexicographically (distances first, words second)
-		cluster.sort()
-		out_file.write("%s[%d]:" % (words[i], len(cluster)))
-		for dist,word in cluster:
-			out_file.write(" %s(%d)" % (word, dist))
-		out_file.write("\n")
+	print_results(nwords, distmap, words, out_file)
 
 
 if __name__=="__main__":
