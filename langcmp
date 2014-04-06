@@ -1,0 +1,149 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import strdist
+
+import sys
+import time
+import argparse
+
+from multiprocessing import Value, Process, Manager
+
+
+##
+# @brief computes distances between words
+# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
+# @param words full list of words
+# @param i_min/i_max indices defining the words for which distances will be computed
+# @param max_dist maximum distance between words to consider
+# @param counter global counter which will hold the number of words processed
+#
+def compute_distances(distmap, words, i_min, i_max, max_dist, counter):
+
+	for i in range(i_min, i_max):
+		for j in range(i+1, len(words)):
+			if abs(len(words[i]) - len(words[j])) <= max_dist:
+				d_ij = strdist.levenshtein(words[i],words[j])
+				if d_ij <= max_dist:
+					distmap[i,j] = d_ij
+					distmap[j,i] = d_ij
+		counter.value += 1
+
+
+##
+# @brief shows the progress of the computing subprocesses
+# @param counter global number of words processed so far
+# @param nwords total number of words which must be processed
+#
+def show_progress(counter, nwords):
+
+	start = time.time()
+	prev_progress = 0.0
+	while True:
+		progress = float(counter.value) / float(nwords)
+		if progress - prev_progress >= 0.0001:
+			now = time.time()
+			# etc: estimated time to completion (in seconds)
+			etc = (now - start) * (1 - progress) / progress
+			etc_m, etc_s = divmod(etc, 60)
+			etc_h, etc_m = divmod(etc_m, 60)
+			sys.stderr.write("progress: %6.2f%%   time left: %02d:%02d:%02d\n" % (
+						100*progress, etc_h, etc_m, etc_s
+					))
+			prev_progress = progress
+			if counter.value == nwords: break
+			time.sleep(1)
+
+##
+# @brief prints an error message and exits with an error code (1)
+#
+def print_error(errmsg):
+	sys.stderr.write("error: %s\n" % errmsg)
+	sys.exit(1)
+
+
+def main(nsubproc, min_wlen, max_dist, verbose, stats, in_file, out_file):
+
+	# read the input file and put all words with length <= min_wlen into a list
+	words = [ word for word in set(in_file.read().lower().split()) if len(word) >= min_wlen ]
+
+	nwords = len(words)
+
+	if nwords == 0:
+		print_error("word list is empty (check your parameters and the input file)")
+
+	# distmap[(i,j)] will hold the distance between words i and j
+	manager = Manager()
+	distmap = manager.dict()
+
+	subprocesses = []
+
+	# words per computing subprocess
+	wpt = nwords / nsubproc
+
+	# initialize the counter subprocess (only in verbose mode)
+	counter = Value('i', 0)
+	if verbose:
+		counter_sub = Process(target = show_progress, args = (counter, nwords))
+		counter_sub.start()
+
+	# configure the computing subprocesses
+	for n in range(nsubproc):
+
+		i_min = n*wpt
+		i_max = (n+1)*wpt
+
+		# the last subprocess gets all remaining words
+		if n == nsubproc-1:
+			i_max = nwords
+
+		subprocesses.append( Process(target = compute_distances,
+			args = (distmap, words, i_min, i_max, max_dist, counter) ) )
+
+	# start all subprocesses
+	for n in range(nsubproc):
+		subprocesses[n].start()
+
+	# wait until all subprocesses are done
+	for n in range(nsubproc):
+		subprocesses[n].join();
+	if verbose:
+		counter_sub.join()
+
+	# print the results to the output file
+	for i in range(nwords):
+		cluster = []
+		for j in range(nwords):
+			if (i,j) in distmap:
+				cluster.append((distmap[i,j],words[j]))
+		# tuples are sorted lexicographically (distances first, words second)
+		cluster.sort()
+		out_file.write("%s[%d]:" % (words[i], len(cluster)))
+		for dist,word in cluster:
+			out_file.write(" %s(%d)" % (word, dist))
+		out_file.write("\n")
+
+
+if __name__=="__main__":
+
+	# parse input parameters
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-n', '--num-subproc', type=int, default=1, help='number of subprocesses')
+	parser.add_argument('-l', '--min-length', type=int, default=4, help='smallest accepted word length')
+	parser.add_argument('-d', '--max-distance', type=int, default=1, help='maximum accepted Levenshtein distance')
+	parser.add_argument('-i', '--input-file', type=argparse.FileType('r'), default=sys.stdin, help="input file (words)")
+	parser.add_argument('-o', '--output-file', type=argparse.FileType('w'), default=sys.stdout, help="output file (results)")
+	parser.add_argument('-v', '--verbose', action='count')
+	parser.add_argument('-s', '--statistics', action='count')
+	namespace = parser.parse_args()
+	namespace = parser.parse_args()
+
+	nsubproc = namespace.num_subproc
+	min_wlen = namespace.min_length
+	max_dist = namespace.max_distance
+	verbose  = namespace.verbose
+	in_file  = namespace.input_file
+	out_file = namespace.output_file
+	stats    = namespace.statistics
+
+	main(nsubproc, min_wlen, max_dist, verbose, stats, in_file, out_file)
