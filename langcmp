@@ -96,7 +96,7 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file):
 
 	# read the input file and put all words with length <= min_wlen into a list
 	words = [ word for word in set(in_file.read().lower().split()) if len(word) >= min_wlen ]
-
+	words.sort()
 	nwords = len(words)
 
 	if nwords == 0:
