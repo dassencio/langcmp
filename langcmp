@@ -57,6 +57,10 @@ def show_progress(counter, nwords):
 
 ##
 # @brief prints the computed results to an output file
+# @param nwords total number of words which were processed
+# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
+# @param words full list of words
+# @param out_file file on which the results will be written
 #
 def print_results(nwords, distmap, words, out_file):
 
@@ -75,6 +79,10 @@ def print_results(nwords, distmap, words, out_file):
 
 ##
 # @brief analyzes and prints basic statistics about the results obtained
+# @param nwords total number of words which were processed
+# @param max_dist maximum considered distance between words
+# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
+# @param words full list of words
 #
 def print_stats(nwords, max_dist, distmap, words):
 
@@ -86,6 +94,7 @@ def print_stats(nwords, max_dist, distmap, words):
 
 ##
 # @brief prints an error message and exits with an error code (1)
+# @param errmsg an error message
 #
 def print_error(errmsg):
 	sys.stderr.write("error: %s\n" % errmsg)
