@@ -57,7 +57,10 @@ def print_histogram(neighbors, plot_hist, hist_file):
 	# counters contain the number of neighbors for each word
 	counters = numpy.array([len(x) for x in neighbors], dtype=numpy.int8)
 
-	hist, bins = numpy.histogram(counters, bins=max(counters)-min(counters), density=True)
+	# we need at least one bin (otherwise an exception will be thrown)
+	nbins = max(1, max(counters)-min(counters))
+
+	hist, bins = numpy.histogram(counters, bins=nbins, density=True)
 
 	for x,y in zip(bins,hist):
 		hist_file.write("%d %f\n" % (x,y))
