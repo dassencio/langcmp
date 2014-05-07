@@ -1,95 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import strdist
+import workers
+import results
 
 import sys
-import time
 import argparse
 
 from multiprocessing import Value, Process, Manager
-
-
-##
-# @brief computes distances between words
-# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
-# @param words full list of words
-# @param i_min/i_max indices defining the words for which distances will be computed
-# @param max_dist maximum distance between words to consider
-# @param counter global counter which will hold the number of words processed
-#
-def compute_distances(distmap, words, i_min, i_max, max_dist, counter):
-
-	for i in range(i_min, i_max):
-		for j in range(i+1, len(words)):
-			if abs(len(words[i]) - len(words[j])) <= max_dist:
-				d_ij = strdist.levenshtein(words[i],words[j])
-				if d_ij <= max_dist:
-					distmap[i,j] = d_ij
-					distmap[j,i] = d_ij
-		counter.value += 1
-
-
-##
-# @brief shows the progress of the computing subprocesses
-# @param counter global number of words processed so far
-# @param nwords total number of words which must be processed
-#
-def show_progress(counter, nwords):
-
-	start = time.time()
-	prev_progress = 0.0
-	while True:
-		progress = float(counter.value) / float(nwords)
-		if progress - prev_progress >= 0.0001:
-			now = time.time()
-			# etc: estimated time to completion (in seconds)
-			etc = (now - start) * (1 - progress) / progress
-			etc_m, etc_s = divmod(etc, 60)
-			etc_h, etc_m = divmod(etc_m, 60)
-			sys.stderr.write("progress: %6.2f%%   time left: %02d:%02d:%02d\n" % (
-						100*progress, etc_h, etc_m, etc_s
-					))
-			prev_progress = progress
-			if counter.value == nwords: break
-			time.sleep(1)
-
-
-##
-# @brief prints the computed results to an output file
-# @param nwords total number of words which were processed
-# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
-# @param words full list of words
-# @param out_file file on which the results will be written
-#
-def print_results(nwords, distmap, words, out_file):
-
-	for i in range(nwords):
-		cluster = []
-		for j in range(nwords):
-			if (i,j) in distmap:
-				cluster.append((distmap[i,j],words[j]))
-		# tuples are sorted lexicographically (distances first, words second)
-		cluster.sort()
-		out_file.write("%s:" % words[i])
-		for dist,word in cluster:
-			out_file.write(" %s" % word)
-		out_file.write("\n")
-
-
-##
-# @brief analyzes and prints basic statistics about the results obtained
-# @param nwords total number of words which were processed
-# @param max_dist maximum considered distance between words
-# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
-# @param words full list of words
-#
-def print_stats(nwords, max_dist, distmap, words):
-
-	avg_neighbors = float(len(distmap)) / float(len(words))
-
-	print "Number of words analyzed (length >= %d characters): %d" % (max_dist, nwords)
-	print "Average number of words within distance %d from any word: %f" % (max_dist, avg_neighbors)
 
 
 ##
@@ -120,7 +38,7 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file):
 	# initialize the counter subprocess (only in verbose mode)
 	counter = Value('i', 0)
 	if verbose:
-		counter_sub = Process(target = show_progress, args = (counter, nwords))
+		counter_sub = Process(target = workers.show_progress, args = (counter, nwords))
 		counter_sub.start()
 
 	# computations per subprocess
@@ -139,7 +57,7 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file):
 				i_max += 1
 				comp_subproc_n += nwords - i_max
 
-		subprocesses.append( Process(target = compute_distances,
+		subprocesses.append( Process(target = workers.compute_distances,
 			args = (distmap, words, i_min, i_max, max_dist, counter) ) )
 
 		i_min = i_max
@@ -154,9 +72,15 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file):
 	if verbose:
 		counter_sub.join()
 
-	print_results(nwords, distmap, words, out_file)
+	# turn the word distance map into a list which, for each word i,
+	# contains a list of its closest neighbors
+	neighbors = [[] for i in range(nwords)]
 
-	print_stats(nwords, max_dist, distmap, words)
+	for pair,value in distmap.items():
+		neighbors[pair[0]].append(pair[1])
+
+	results.print_results(neighbors, words, out_file)
+	results.print_stats(neighbors, min_wlen, max_dist)
 
 
 if __name__=="__main__":
