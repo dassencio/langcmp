@@ -7,8 +7,7 @@ import math
 
 ##
 # @brief prints the computed results to an output file
-# @param neighbors a list such that neighbors[i] contains a list of its neighbors
-#        (words within the maximum specified distance)
+# @param neighbors a list of lists containing the neighbors of each word
 # @param words full list of words
 # @param out_file file on which the results will be written
 #
@@ -26,8 +25,7 @@ def print_results(neighbors, words, out_file):
 
 ##
 # @brief analyzes and prints basic statistics about the results obtained
-# @param neighbors a list such that neighbors[i] contains a list of its neighbors
-#        (words within the maximum specified distance)
+# @param neighbors a list of lists containing the neighbors of each word
 # @param min_wlan smallest word length considered (smaller words are ignored)
 # @param max_dist maximum considered distance between words
 #
