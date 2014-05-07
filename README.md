@@ -9,6 +9,19 @@ results will indicate how similar the words of this language are (only written
 form is taken into consideration; langcmp does not deal with word pronunciation).
 
 
+Required Libraries
+==================
+
+The following python libraries are used:
+
+    - numpy
+    - matplotlib
+
+On Ubuntu/Debian, you can install these libraries with:
+
+	sudo apt-get install python-numpy python-matplotlib
+
+
 Subprocesses
 ============
 
