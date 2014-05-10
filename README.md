@@ -27,24 +27,34 @@ Subprocesses
 
 Langcmp can break the computing work into subprocesses to reduce the overall
 computation time. I recommend you try using different numbers of subprocesses
-to find out an optimal value for your device.
+to find out an optimal value for your device (suggestion: try first using the
+number of CPU cores available).
+
+
+Histogram
+=========
+
+After computing all necessary Levenshtein distances, langcmp generates a
+histogram showing the fraction of the total number of words versus the number
+of detected words within distance d.
 
 
 Usage
 =====
 
-The example command below shows all options from langcmp. It instructs langcmpto
-run 3 subprocesses, to consider only words in the input file (words.txt) which
-are at least 5 characters long and to only consider pairs of words which are no
-farther (in distance) than 2 edits from each other:
+The example command below shows most options from langcmp. It instructs langcmp
+to run 3 subprocesses, to consider only words in the input file (words.txt)
+which are at least 5 characters long and to only consider pairs of words which
+are no farther (in distance) than 2 edits from each other:
 
-	./langcmp -v -n 3 -l 5 -d 2 -i words.txt -o results.txt
+	./langcmp -v -n 3 -l 5 -d 2 -i words.txt -o results.txt -s stats.txt -g histogram.txt
 
 Above -n (--num-subproc) specifies the number of subprocesses, -l (--min-length)
 specifies the minimum length a word must have to be analyzed and -d (--max-distance)
 specifies the maximum Levenshtein distance which will be accepted in the analysis
 (pairs of words whose Levenshtein distances are larger than this specified value
-will not be considered). The results will be written on results.txt.
+will not be considered). The results will be written on results.txt, the
+computed statistics on stats.txt and the histogram data on histogram.txt.
 
 If you need help, run './langcmp -h'.
 
@@ -54,12 +64,9 @@ Included word lists
 
 Langcmp already comes with the following word lists (in the wordlists directory):
 
-- 100 most commonly used English words
-- 1000 most commonly used English words
-- 10000 most commonly used English words
-- 100 most commonly used German words
-- 1000 most commonly used German words
-- 10000 most commonly used German words
+- 100 most commonly used English/German/French/Dutch words
+- 1000 most commonly used English/German/French/Dutch words
+- 10000 most commonly used English/German/French/Dutch words
 
 These lists were obtaind from the website of the University of Leipzig, Germany
 (http://www.wortschatz.uni-leipzig.de/html/wliste.html).
