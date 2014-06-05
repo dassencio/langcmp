@@ -19,7 +19,7 @@ The following python libraries are used:
 
 On Ubuntu/Debian, you can install these libraries with:
 
-	sudo apt-get install python-numpy python-matplotlib
+	sudo apt-get install python3-numpy python3-matplotlib
 
 
 Subprocesses
