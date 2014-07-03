@@ -103,7 +103,6 @@ if __name__=="__main__":
 	parser.add_argument('-p', '--plot-histogram', action='count')
 	parser.add_argument('-v', '--verbose', action='count')
 	namespace = parser.parse_args()
-	namespace = parser.parse_args()
 
 	nsubproc   = namespace.num_subproc
 	min_wlen   = namespace.min_length
