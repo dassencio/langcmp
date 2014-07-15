@@ -89,7 +89,7 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file, stats_file, p
 	results.print_histogram(neighbors, plot_hist, hist_file)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
 
 	# parse input parameters
 	parser = argparse.ArgumentParser()
