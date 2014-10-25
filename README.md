@@ -47,7 +47,7 @@ to run 3 subprocesses, to consider only words in the input file (words.txt)
 which are at least 5 characters long and to only consider pairs of words which
 are no farther (in distance) than 2 edits from each other:
 
-	./langcmp -v -n 3 -l 5 -d 2 -i words.txt -o results.txt -s stats.txt -g histogram.txt
+	./langcmp.py -v -n 3 -l 5 -d 2 -i words.txt -o results.txt -s stats.txt -g histogram.txt
 
 Above -n (--num-subproc) specifies the number of subprocesses, -l (--min-length)
 specifies the minimum length a word must have to be analyzed and -d (--max-distance)
@@ -56,7 +56,7 @@ specifies the maximum Levenshtein distance which will be accepted in the analysi
 will not be considered). The results will be written on results.txt, the
 computed statistics on stats.txt and the histogram data on histogram.txt.
 
-If you need help, run './langcmp -h'.
+If you need help, run './langcmp.py -h'.
 
 
 Included word lists
