@@ -70,3 +70,9 @@ Langcmp already comes with the following word lists (in the wordlists directory)
 
 These lists were obtaind from the website of the University of Leipzig, Germany
 (http://www.wortschatz.uni-leipzig.de/html/wliste.html).
+
+Contributors & Contact Information
+==================================
+
+Diego Assencio / diego@assencio.com
+
