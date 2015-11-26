@@ -1,5 +1,5 @@
-langcmp
-=======
+Description
+===========
 
 Langcmp is a language comparison tool. It computes the Levenshtein distances
 between the words contained in an input file and outputs, for each considered
