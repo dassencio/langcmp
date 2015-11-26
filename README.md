@@ -9,6 +9,13 @@ results will indicate how similar the words of this language are (only written
 form is taken into consideration; langcmp does not deal with word pronunciation).
 
 
+License
+=======
+
+All code from this project is licensed under the GPLv3. See 'LICENSE' for more.
+
+
+
 Required Libraries
 ==================
 
