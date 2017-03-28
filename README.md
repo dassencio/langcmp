@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dassencio/langcmp.svg?branch=master)](https://travis-ci.org/dassencio/langcmp)
+
 Description
 ===========
 
