@@ -16,8 +16,9 @@ pronunciation). As an example of what it can be used for, see
 License
 =======
 
-All code from this project is licensed under the GPLv3. See the `LICENSE` file
-for more information.
+All code from this project is licensed under the GPLv3. See the
+[`LICENSE`](https://github.com/dassencio/langcmp/tree/master/LICENSE)
+file for more information.
 
 
 Required modules
