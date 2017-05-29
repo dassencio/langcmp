@@ -1,15 +1,18 @@
 
+"""Functions which print and analyze computed results."""
 
 import numpy
 
 
-##
-# @brief prints the computed results to an output file
-# @param neighbors a list of lists containing the neighbors of each word
-# @param words full list of words
-# @param out_file file on which the results will be written
-#
 def print_results(neighbors, words, out_file):
+
+	"""
+	Prints the computed results to an output file.
+
+	neighbors - A list of lists containing the neighbors of each word.
+	words - The full list of words.
+	out_file - The file on which the results will be written.
+	"""
 
 	nwords = len(neighbors)
 
@@ -21,14 +24,16 @@ def print_results(neighbors, words, out_file):
 	out_file.write("\n")
 
 
-##
-# @brief analyzes and prints basic statistics about the results obtained
-# @param neighbors a list of lists containing the neighbors of each word
-# @param min_wlen smallest word length considered (smaller words are ignored)
-# @param max_dist maximum considered distance between words
-# @param stats_file file where the statistics data will be written
-#
 def print_stats(neighbors, min_wlen, max_dist, stats_file):
+
+	"""
+	Analyzes and prints basic statistics about the results obtained.
+
+	neighbors - A list of lists containing the neighbors of each word.
+	min_wlen - The smallest word length considered (smaller words are ignored).
+	max_dist - The maximum considered distance between words.
+	stats_file - The file where the statistics data will be written.
+	"""
 
 	nwords = len(neighbors)
 
@@ -42,13 +47,15 @@ def print_stats(neighbors, min_wlen, max_dist, stats_file):
 	stats_file.write("\tstd.dev.: %f\n\n" % numpy.std(counters))
 
 
-#
-# @brief writes all histogram data (neighbor counter frequency) to a file
-# @param neighbors a list of lists containing the neighbors of each word
-# @param plot_hist True if the final histogram should be plotted, False otherwise
-# @param hist_file file on which the histogram data will be written
-#
 def print_histogram(neighbors, plot_hist, hist_file):
+
+	"""
+	Writes all histogram data (neighbor counter frequency) to a file.
+
+	neighbors - A list of lists containing the neighbors of each word.
+	plot_hist - True if the final histogram should be plotted, False otherwise.
+	hist_file - The file on which the histogram data will be written.
+	"""
 
 	nwords = len(neighbors)
 

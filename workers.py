@@ -5,15 +5,17 @@ import time
 import strdist
 
 
-##
-# @brief computes distances between words
-# @param distmap dictionary: (i,j) --> dist(i,j) where i and j are word indices
-# @param words full list of words
-# @param i_min/i_max indices defining the words for which distances will be computed
-# @param max_dist maximum distance between words to consider
-# @param counter global counter which will hold the number of words processed
-#
 def compute_distances(distmap, words, i_min, i_max, max_dist, counter):
+
+	"""
+	Computes distances between words.
+
+	distmap - A dictionary (i,j) --> dist(i,j) where i and j are word indices.
+	words - The full list of words.
+	i_min/i_max indices defining the words for which distances will be computed.
+	max_dist - The maximum distance between words to consider.
+	counter - A global counter which will hold the number of words processed.
+	"""
 
 	for i in range(i_min, i_max):
 		for j in range(i+1, len(words)):
@@ -25,12 +27,14 @@ def compute_distances(distmap, words, i_min, i_max, max_dist, counter):
 		counter.value += 1
 
 
-##
-# @brief shows the progress of the computing subprocesses
-# @param counter global number of words processed so far
-# @param nwords total number of words which must be processed
-#
 def show_progress(counter, nwords):
+
+	"""
+	Shows the progress of the computing subprocesses.
+
+	counter - The global number of words processed so far.
+	nwords - The total number of words which must be processed.
+	"""
 
 	start = time.time()
 	prev_progress = 0.0
