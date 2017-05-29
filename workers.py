@@ -1,8 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-
+import strdist
 import sys
 import time
-import strdist
 
 
 def compute_distances(distmap, words, i_min, i_max, max_dist, counter):

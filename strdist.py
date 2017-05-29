@@ -1,11 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-
-"""Functions which compute distances between strings"""
+"""Functions which compute distances between strings."""
 
 import numpy
 
 
 def levenshtein(s,t):
+
 	"""
 	Returns the Levenshtein distance between s and t.
 
@@ -48,6 +50,7 @@ def levenshtein(s,t):
 
 
 def hamming(s,t):
+
 	"""
 	Returns the Hamming distance between s and t. If len(s) != len(t),
 	the distance between s[0:M] and t[0:M] is returned, where
