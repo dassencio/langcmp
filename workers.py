@@ -15,8 +15,8 @@ def compute_distances(distmap, words, i_min, i_max, max_dist, counter):
 
 	distmap - A dictionary (i,j) --> dist(i,j) where i and j are word indices.
 	words - The full list of words.
-	i_min/i_max indices defining the words for which distances will be computed.
-	max_dist - The maximum distance between words to consider.
+	i_min/i_max - indices defining the words for which distances will be computed.
+	max_dist - The maximum considered distance between words.
 	counter - A global counter which will hold the number of words processed.
 	"""
 

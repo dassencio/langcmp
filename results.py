@@ -34,7 +34,7 @@ def print_stats(neighbors, min_wlen, max_dist, stats_file):
 	neighbors - A list of lists containing the neighbors of each word.
 	min_wlen - The smallest word length considered (smaller words are ignored).
 	max_dist - The maximum considered distance between words.
-	stats_file - The file where the statistics data will be written.
+	stats_file - The file on which the statistics data will be written.
 	"""
 
 	nwords = len(neighbors)
