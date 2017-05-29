@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import multiprocessing
 import results
 import sys
 import workers
-from multiprocessing import Value, Process, Manager
 
 
 def print_error(errmsg):
@@ -27,15 +27,16 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file, stats_file, p
 		print_error("word list is empty (check your parameters and the input file)")
 
 	# distmap[(i,j)] will hold the distance between words i and j
-	manager = Manager()
+	manager = multiprocessing.Manager()
 	distmap = manager.dict()
 
 	subprocesses = []
 
 	# initialize the counter subprocess (only in verbose mode)
-	counter = Value('i', 0)
+	counter = multiprocessing.Value('i', 0)
 	if verbose:
-		counter_sub = Process(target = workers.show_progress, args = (counter, nwords))
+		counter_sub = multiprocessing.Process(target = workers.show_progress,
+		                                      args = (counter, nwords))
 		counter_sub.start()
 
 	# computations per subprocess
@@ -54,8 +55,9 @@ def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file, stats_file, p
 				i_max += 1
 				comp_subproc_n += nwords - i_max
 
-		subprocesses.append( Process(target = workers.compute_distances,
-			args = (distmap, words, i_min, i_max, max_dist, counter) ) )
+		subprocesses.append(
+			multiprocessing.Process(target = workers.compute_distances,
+			                        args = (distmap, words, i_min, i_max, max_dist, counter)))
 
 		i_min = i_max
 
