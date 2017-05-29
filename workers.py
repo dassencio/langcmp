@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Functions which specify the tasks for worker threads."""
+
 import strdist
 import sys
 import time
