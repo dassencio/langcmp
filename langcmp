@@ -9,108 +9,155 @@ import workers
 
 
 def print_error(errmsg):
+    """Prints an error message and exits with an error code (1)."""
 
-	"""Prints an error message and exits with an error code (1)."""
-
-	sys.stderr.write("error: %s\n" % errmsg)
-	sys.exit(1)
+    sys.stderr.write("error: %s\n" % errmsg)
+    sys.exit(1)
 
 
-def main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file, stats_file, plot_hist, hist_file):
+def main(nsubproc,
+         min_wlen,
+         max_dist,
+         verbose,
+         in_file,
+         out_file,
+         stats_file,
+         plot_hist,
+         hist_file):
 
-	# read the input file and put all words with length <= min_wlen into a list
-	words = [ word for word in set(in_file.read().lower().split()) if len(word) >= min_wlen ]
-	words.sort()
-	nwords = len(words)
+    # read the input file and put all words with length <= min_wlen into a list
+    words = [word for word in set(
+        in_file.read().lower().split()) if len(word) >= min_wlen]
+    words.sort()
+    nwords = len(words)
 
-	if nwords == 0:
-		print_error("word list is empty (check your parameters and the input file)")
+    if nwords == 0:
+        print_error("word list is empty (check your parameters and the " +
+                    "input file)")
 
-	# distmap[(i,j)] will hold the distance between words i and j
-	manager = multiprocessing.Manager()
-	distmap = manager.dict()
+    # distmap[(i,j)] will hold the distance between words i and j
+    manager = multiprocessing.Manager()
+    distmap = manager.dict()
 
-	subprocesses = []
+    subprocesses = []
 
-	# initialize the counter subprocess (only in verbose mode)
-	counter = multiprocessing.Value('i', 0)
-	if verbose:
-		counter_sub = multiprocessing.Process(target = workers.show_progress,
-		                                      args = (counter, nwords))
-		counter_sub.start()
+    # initialize the counter subprocess (only in verbose mode)
+    counter = multiprocessing.Value("i", 0)
+    if verbose:
+        counter_sub = multiprocessing.Process(target=workers.show_progress,
+                                              args=(counter, nwords))
+        counter_sub.start()
 
-	# computations per subprocess
-	comp_per_subproc = (nwords*(nwords+1)/2) / nsubproc
+    # computations per subprocess
+    comp_per_subproc = (nwords * (nwords + 1) / 2) / nsubproc
 
-	# configure the computing subprocesses
-	i_min = 0
-	i_max = 1
-	for n in range(nsubproc):
+    # configure the computing subprocesses
+    i_min = 0
+    i_max = 1
+    for n in range(nsubproc):
 
-		if n == nsubproc-1:
-			i_max = nwords
-		else:
-			comp_subproc_n = nwords - i_min - 1
-			while comp_subproc_n < comp_per_subproc:
-				i_max += 1
-				comp_subproc_n += nwords - i_max
+        if n == nsubproc - 1:
+            i_max = nwords
+        else:
+            comp_subproc_n = nwords - i_min - 1
+            while comp_subproc_n < comp_per_subproc:
+                i_max += 1
+                comp_subproc_n += nwords - i_max
 
-		subprocesses.append(
-			multiprocessing.Process(target = workers.compute_distances,
-			                        args = (distmap, words, i_min, i_max, max_dist, counter)))
+        subprocesses.append(
+            multiprocessing.Process(target=workers.compute_distances,
+                                    args=(distmap, words, i_min, i_max,
+                                          max_dist, counter)))
 
-		i_min = i_max
+        i_min = i_max
 
-	# start all subprocesses
-	for n in range(nsubproc):
-		subprocesses[n].start()
+    # start all subprocesses
+    for n in range(nsubproc):
+        subprocesses[n].start()
 
-	# wait until all subprocesses are done
-	for n in range(nsubproc):
-		subprocesses[n].join();
-	if verbose:
-		counter_sub.join()
+    # wait until all subprocesses are done
+    for n in range(nsubproc):
+        subprocesses[n].join()
+    if verbose:
+        counter_sub.join()
 
-	# turn the word distance map into a list which, for each word i,
-	# contains a list of its closest neighbors
-	neighbors = [[] for i in range(nwords)]
+    # turn the word distance map into a list which, for each word i,
+    # contains a list of its closest neighbors
+    neighbors = [[] for i in range(nwords)]
 
-	for pair,value in distmap.items():
-		neighbors[pair[0]].append(pair[1])
+    for pair, value in distmap.items():
+        neighbors[pair[0]].append(pair[1])
 
-	# print the results (words and their neighbors)
-	results.print_results(neighbors, words, out_file)
+    # print the results (words and their neighbors)
+    results.print_results(neighbors, words, out_file)
 
-	# print all relevant statistics
-	results.print_stats(neighbors, min_wlen, max_dist, stats_file)
+    # print all relevant statistics
+    results.print_stats(neighbors, min_wlen, max_dist, stats_file)
 
-	# print (and plot, if desired) the neighbor count histogram
-	results.print_histogram(neighbors, plot_hist, hist_file)
+    # print (and plot, if desired) the neighbor count histogram
+    results.print_histogram(neighbors, plot_hist, hist_file)
 
 
 if __name__ == "__main__":
 
-	# parse input parameters
-	parser = argparse.ArgumentParser()
-	parser.add_argument('-n', '--num-subproc', type=int, default=1, help='number of subprocesses (default: 1)')
-	parser.add_argument('-l', '--min-length', type=int, default=4, help='smallest accepted word length (default: 4)')
-	parser.add_argument('-d', '--max-distance', type=int, default=2, help='maximum accepted Levenshtein distance (default: 2)')
-	parser.add_argument('-i', '--input-file', type=argparse.FileType('r'), default=sys.stdin, help='input file (default: stdin)')
-	parser.add_argument('-o', '--output-file', type=argparse.FileType('w'), default=sys.stdout, help='output file (default: stdout)')
-	parser.add_argument('-s', '--statistics-file', type=argparse.FileType('w'), default=sys.stdout, help='statistics file (default: stdout)')
-	parser.add_argument('-g', '--histogram-file', type=argparse.FileType('w'), default=sys.stdout, help='histogram data file (default: stdout)')
-	parser.add_argument('-p', '--plot-histogram', action='count')
-	parser.add_argument('-v', '--verbose', action='count')
-	namespace = parser.parse_args()
+    # parse input parameters
+    parser = argparse.ArgumentParser()
 
-	nsubproc   = namespace.num_subproc
-	min_wlen   = namespace.min_length
-	max_dist   = namespace.max_distance
-	verbose    = namespace.verbose
-	in_file    = namespace.input_file
-	out_file   = namespace.output_file
-	stats_file = namespace.statistics_file
-	hist_file  = namespace.histogram_file
-	plot_hist  = namespace.plot_histogram
+    parser.add_argument("-n",
+                        "--num-subproc",
+                        type=int,
+                        default=1,
+                        help="number of subprocesses (default: 1)")
 
-	main(nsubproc, min_wlen, max_dist, verbose, in_file, out_file, stats_file, plot_hist, hist_file)
+    parser.add_argument("-l",
+                        "--min-length",
+                        type=int,
+                        default=4,
+                        help="smallest accepted word length (default: 4)")
+
+    parser.add_argument("-d",
+                        "--max-distance",
+                        type=int,
+                        default=2,
+                        help="maximum accepted Levenshtein distance " +
+                        "(default: 2)")
+
+    parser.add_argument("-i",
+                        "--input-file",
+                        type=argparse.FileType("r"),
+                        default=sys.stdin,
+                        help="input file (default: stdin)")
+
+    parser.add_argument("-o",
+                        "--output-file",
+                        type=argparse.FileType("w"),
+                        default=sys.stdout,
+                        help="output file (default: stdout)")
+
+    parser.add_argument("-s",
+                        "--statistics-file",
+                        type=argparse.FileType("w"),
+                        default=sys.stdout,
+                        help="statistics file (default: stdout)")
+
+    parser.add_argument("-g",
+                        "--histogram-file",
+                        type=argparse.FileType("w"),
+                        default=sys.stdout,
+                        help="histogram data file (default: stdout)")
+
+    parser.add_argument("-p", "--plot-histogram", action="count")
+
+    parser.add_argument("-v", "--verbose", action="count")
+
+    namespace = parser.parse_args()
+
+    main(namespace.num_subproc,
+         namespace.min_length,
+         namespace.max_distance,
+         namespace.verbose,
+         namespace.input_file,
+         namespace.output_file,
+         namespace.statistics_file,
+         namespace.plot_histogram,
+         namespace.histogram_file)
