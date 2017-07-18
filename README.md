@@ -26,12 +26,12 @@ Required modules
 
 The following modules are used:
 
-    - numpy
-    - matplotlib
+* `numpy`
+* `matplotlib`
 
-On Ubuntu/Debian, you can install them with the following command:
+You can install them with the following command:
 
-	sudo apt-get install python-numpy python-matplotlib
+	pip install numpy matplotlib
 
 
 Subprocesses
