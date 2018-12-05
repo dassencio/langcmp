@@ -1,7 +1,6 @@
-[![Build Status](https://travis-ci.org/dassencio/langcmp.svg?branch=master)](https://travis-ci.org/dassencio/langcmp)
+[![Build Status](https://api.travis-ci.com/dassencio/langcmp.svg?branch=master)](https://travis-ci.com/dassencio/langcmp)
 
-Description
-===========
+# Description
 
 `langcmp` is a language comparison tool (written in Python) which computes the
 Levenshtein distances between the words contained in an input file and outputs,
@@ -12,39 +11,31 @@ language, the results will indicate how similar the words of this language are
 pronunciation). As an example of what it can be used for, see
 [this article](http://diego.assencio.com/?index=9636c4a74afcc3924fdd2f03f83492c6).
 
-
-License
-=======
+# License
 
 All code from this project is licensed under the GPLv3. See the
 [`LICENSE`](https://github.com/dassencio/langcmp/tree/master/LICENSE)
 file for more information.
 
-
-Required modules
-================
+# Required modules
 
 The following modules are used:
 
-* `numpy`
-* `matplotlib`
+- `numpy`
+- `matplotlib`
 
 You can install them with the following command:
 
-	pip install numpy matplotlib
+    pip install numpy matplotlib
 
-
-Subprocesses
-============
+# Subprocesses
 
 `langcmp` can break the computing work into subprocesses to reduce the overall
 computation time. I recommend you try using different numbers of subprocesses
 to find out the optimal value for your machine (suggestion: try first using the
 number of CPU cores available).
 
-
-Histogram
-=========
+# Histogram
 
 After computing all necessary Levenshtein distances, `langcmp` generates a
 histogram showing the fraction of the total number of words versus the number
@@ -53,16 +44,14 @@ represents how many words in the input dictionary have `d` "closest" neighbors
 in this dictionary. The more "to the left" the histogram is, the bigger
 is the difference in spelling between the words in the dictionary.
 
-
-Usage instructions
-==================
+# Usage instructions
 
 The example command below shows most options from `langcmp`. It instructs `langcmp`
 to run 3 subprocesses, to consider only words in the input file `words.txt`
 which are at least 5 characters long and to only consider pairs of words which
 are no farther (in distance) than 2 edits from each other:
 
-	./langcmp -v -n 3 -l 5 -d 2 -i words.txt -o results.txt -s stats.txt -g histogram.txt
+    ./langcmp -v -n 3 -l 5 -d 2 -i words.txt -o results.txt -s stats.txt -g histogram.txt
 
 Above `-n` (`--num-subproc`) specifies the number of subprocesses, `-l` (`--min-length`)
 specifies the minimum length a word must have to be analyzed and `-d` (`--max-distance`)
@@ -73,9 +62,7 @@ computed statistics on `stats.txt` and the histogram data on `histogram.txt`.
 
 For more details on the parameters which `langcmp` can take, run `./langcmp -h`.
 
-
-Included word lists
-===================
+# Included word lists
 
 This project already comes with the following word lists (in the `wordlists`
 subdirectory):
@@ -86,9 +73,6 @@ subdirectory):
 
 These lists were obtaind from the University of Leipzig, Germany.
 
-
-Contributors & contact information
-==================================
+# Contributors & contact information
 
 Diego Assencio / diego@assencio.com
-
