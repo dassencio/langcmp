@@ -17,9 +17,8 @@ def print_results(neighbors, words, out_file):
     nwords = len(neighbors)
 
     for i, neighbors_i in enumerate(neighbors):
-        out_file.write("%s:" % words[i])
-        for j in neighbors_i:
-            out_file.write(" %s" % words[j])
+        out_file.write("%s: " % words[i])
+        out_file.write(" ".join(sorted([words[j] for j in neighbors_i])))
         out_file.write("\n")
     out_file.write("\n")
 
