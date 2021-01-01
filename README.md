@@ -2,7 +2,7 @@
 
 # Description
 
-`langcmp` is a language comparison tool (written in Python) which computes the
+`langcmp` is a language comparison tool (written in Python 3) which computes the
 Levenshtein distances between the words contained in an input file and outputs,
 for each considered input word, a list of words containing its "closest" words.
 If the contents of the input file represent the most commonly used words of a
@@ -26,7 +26,7 @@ The following modules are used:
 
 You can install them with the following command:
 
-    pip install numpy matplotlib
+    pip3 install numpy matplotlib
 
 # Subprocesses
 
