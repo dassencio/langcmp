@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -e
+
+absolute_path() {
+  cd "$1" &> /dev/null
+  pwd
+}
+
+test_dir="$(absolute_path "$1")"
+langcmp_dir="$(absolute_path "$(dirname "$0")")"
+test_parameters="$(cat "$test_dir/parameters.in")"
+
+tmp_dir=$(mktemp -d)
+cd $tmp_dir
+
+"$langcmp_dir/langcmp" -v \
+  -n ${NUM_SUBPROC:-1} \
+  -i "$test_dir/wordlist.in" \
+  -g histogram.out \
+  -o results.out \
+  -s stats.out \
+  $test_parameters
+
+for filename in *.out
+do
+  diff -su "$filename" "$test_dir/$filename"
+done
