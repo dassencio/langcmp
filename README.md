@@ -22,12 +22,12 @@ file for more information.
 
 The following modules are used:
 
-- `numpy`
 - `matplotlib`
+- `numpy`
 
 You can install them with the following command:
 
-    pip3 install numpy matplotlib
+    pip3 install matplotlib numpy
 
 # Subprocesses
 
