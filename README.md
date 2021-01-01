@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.com/dassencio/langcmp.svg?branch=master)](https://travis-ci.com/dassencio/langcmp)
+![Functional tests](https://github.com/dassencio/langcmp/workflows/Functional%20tests/badge.svg)
 
 # Description
 
